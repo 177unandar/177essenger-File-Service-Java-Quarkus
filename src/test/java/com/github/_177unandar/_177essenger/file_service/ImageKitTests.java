@@ -1,6 +1,7 @@
 package com.github._177unandar._177essenger.file_service;
 
 import com.github._177unandar._177essenger.file_service.adapter.out.storages.ImageKitFileStorage;
+import com.github._177unandar._177essenger.file_service.core.contracts.FileFolders;
 import com.github._177unandar._177essenger.file_service.core.domain.exceptions.UploadFileException;
 import com.google.gson.Gson;
 import io.imagekit.sdk.exceptions.*;
@@ -32,7 +33,7 @@ public class ImageKitTests {
      */
     private Result testUploadImage(boolean isPrivate) throws UploadFileException {
 
-        String folder = "Tests";
+        String folder = FileFolders.TEST;
         Result imageKit = (Result) fileStorage.uploadFile(mockImage, "test.png", folder, isPrivate);
 
         assertNotNull(imageKit);

@@ -3,12 +3,12 @@ package com.github._177unandar._177essenger.file_service;
 import com.github._177unandar._177essenger.file_service.adapter.out.repositories.MongoFileRepository;
 import com.github._177unandar._177essenger.file_service.adapter.out.storages.ImageKitFileStorage;
 import com.github._177unandar._177essenger.file_service.core.contracts.FilePurposes;
-import com.github._177unandar._177essenger.file_service.core.contracts.FileService;
 import com.github._177unandar._177essenger.file_service.core.contracts.StorageProviders;
 import com.github._177unandar._177essenger.file_service.core.domain.entities.FileEntity;
 import com.github._177unandar._177essenger.file_service.core.domain.exceptions.FileAccessDeniedException;
 import com.github._177unandar._177essenger.file_service.core.domain.exceptions.FileNotFoundException;
 import com.github._177unandar._177essenger.file_service.core.domain.repositories.FileRepository;
+import com.github._177unandar._177essenger.file_service.core.services.FileService;
 import com.github._177unandar._177essenger.file_service.core.services.FileServiceImpl;
 import com.github._177unandar._177essenger.file_service.core.storages.FileStorage;
 import com.google.gson.Gson;
@@ -44,7 +44,6 @@ public class FileServiceTests {
     private final String sampleImage = System.getenv("IMAGEKIT_SAMPLE_IMAGE");
     private final String samplePrivateImage = System.getenv("IMAGEKIT_SAMPLE_PRIVATE_IMAGE");
 
-    private final FileStorageTestEntity uploadedPrivateFile = new FileStorageTestEntity(storageEndPoint, samplePrivateImage);
     private final String fileId = "1";
     private final String invalidFileId = "404";
     private final UUID authorizedUserId = UUID.randomUUID();
@@ -52,11 +51,13 @@ public class FileServiceTests {
     private final String resize = "100";
     private final int expiredInSeconds = 60;
 
-    FileStorageTestEntity uploadedFile = new FileStorageTestEntity(storageEndPoint, sampleImage);
+    private final FileStorageTestEntity uploadedFile = new FileStorageTestEntity(storageEndPoint, sampleImage);
+    private final FileStorageTestEntity uploadedPrivateFile = new FileStorageTestEntity(storageEndPoint, samplePrivateImage);
 
-    FileEntity uploadedFileEntity = FileEntity.builder()
+    private final FileEntity uploadedFileEntity = FileEntity.builder()
             .id(fileId)
             .provider(StorageProviders.IMAGEKIT)
+            .purpose(FilePurposes.TEST)
             .data(gson.toJson(uploadedFile))
             .uploadedBy(authorizedUserId)
             .build();
@@ -64,6 +65,7 @@ public class FileServiceTests {
     private final FileEntity uploadedPrivateFileEntity = FileEntity.builder()
             .id(fileId)
             .provider(StorageProviders.IMAGEKIT)
+            .purpose(FilePurposes.TEST)
             .data(gson.toJson(uploadedPrivateFile))
             .uploadedBy(authorizedUserId)
             .permission(List.of(authorizedUserId))

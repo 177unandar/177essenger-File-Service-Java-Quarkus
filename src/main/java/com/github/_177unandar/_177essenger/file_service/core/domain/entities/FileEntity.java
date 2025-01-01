@@ -11,6 +11,7 @@ import java.util.UUID;
 public class FileEntity {
     private String id;
     private String provider;
+    private String purpose;
     private String data; // JSON data as a string
     private UUID uploadedBy;
     private List<UUID> permission;

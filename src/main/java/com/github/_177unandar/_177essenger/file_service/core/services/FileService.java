@@ -1,4 +1,4 @@
-package com.github._177unandar._177essenger.file_service.core.contracts;
+package com.github._177unandar._177essenger.file_service.core.services;
 
 import com.github._177unandar._177essenger.file_service.core.domain.entities.FileEntity;
 import com.github._177unandar._177essenger.file_service.core.domain.exceptions.FileAccessDeniedException;
