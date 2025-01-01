@@ -1,4 +1,4 @@
-package com.github._177unandar.file_service;
+package com.github._177unandar._177essenger.file_service;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

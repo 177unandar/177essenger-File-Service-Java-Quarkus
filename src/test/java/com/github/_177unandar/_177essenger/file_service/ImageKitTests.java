@@ -1,14 +1,15 @@
-package com.github._177unandar.file_service;
+package com.github._177unandar._177essenger.file_service;
 
-import com.github._177unandar.file_service.adapter.out.storage.ImageKitFileStorage;
-import com.github._177unandar.file_service.core.domain.exceptions.UploadFileException;
+import com.github._177unandar._177essenger.file_service.adapter.out.storages.ImageKitFileStorage;
+import com.github._177unandar._177essenger.file_service.core.domain.exceptions.UploadFileException;
+import com.google.gson.Gson;
 import io.imagekit.sdk.exceptions.*;
 import io.imagekit.sdk.models.results.Result;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.github._177unandar.file_service.TestUtils.getUrlResponseCode;
+import static com.github._177unandar._177essenger.file_service.TestUtils.getUrlResponseCode;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Assuming ImageKitFileStorage, MockMultipartFile, ImageKitResponse, TestUtils are defined elsewhere (or you can replace their functionalities)
@@ -18,12 +19,12 @@ public class ImageKitTests {
     private final byte[] mockImage;
 
     public ImageKitTests() throws Exception {
-        fileStorage = new ImageKitFileStorage();
+        fileStorage = new ImageKitFileStorage(new Gson());
         mockImage = TestUtils.generateMockImage();
     }
 
     /**
-     * Uploads a test image to the ImageKit storage and verifies the upload.
+     * Uploads a test image to the ImageKit storages and verifies the upload.
      *
      * @param isPrivate Indicates whether the image should be uploaded as private.
      * @return The result from ImageKit containing the uploaded file's details.
@@ -32,7 +33,7 @@ public class ImageKitTests {
     private Result testUploadImage(boolean isPrivate) throws UploadFileException {
 
         String folder = "Tests";
-        Result imageKit = fileStorage.uploadFile(mockImage, "test.png", folder, isPrivate);
+        Result imageKit = (Result) fileStorage.uploadFile(mockImage, "test.png", folder, isPrivate);
 
         assertNotNull(imageKit);
         assertNotNull(imageKit.getFileId());
@@ -63,22 +64,23 @@ public class ImageKitTests {
         // Test upload public image
         Result response = testUploadImage(false);
 
+        String jsonResponse = new Gson().toJson(response);
         // Get original image URL
-        String originalUrl = fileStorage.getFileUrl(response);
+        String originalUrl = fileStorage.getFileUrl(jsonResponse);
         assertNotNull(originalUrl);
 
         // Check response code of original image URL
         assertEquals(200, getUrlResponseCode(originalUrl));
 
         // Get resized image URL
-        String resizedUrl = fileStorage.getFileUrl(response, "100", "100");
+        String resizedUrl = fileStorage.getFileUrl(jsonResponse, "100", "100");
         assertNotNull(resizedUrl);
 
         // Check response code of resized image URL
         assertEquals(200, getUrlResponseCode(resizedUrl));
 
         // Delete uploaded file
-        fileStorage.deleteFile(response);
+        assertTrue(fileStorage.deleteFile(jsonResponse));
 
         // Wait for deletion to propagate
         TimeUnit.SECONDS.sleep(3);
@@ -111,12 +113,13 @@ public class ImageKitTests {
     public void testProcessUploadedPrivateImage() throws InterruptedException, UploadFileException, ForbiddenException, TooManyRequestsException, InternalServerException, UnauthorizedException, BadRequestException, UnknownException {
         // Test upload private image
         Result response = testUploadImage(true);
+        String jsonResponse = new Gson().toJson(response);
 
         int expiredInSeconds = 5;
         int waitingTimeForTest = 1;
 
         // Get original signed image URL
-        String originalUrl = fileStorage.generateSignedUrl(response, expiredInSeconds);
+        String originalUrl = fileStorage.generateSignedUrl(jsonResponse, expiredInSeconds);
         assertNotNull(originalUrl);
 
         // Check response code of original signed image URL
@@ -129,7 +132,7 @@ public class ImageKitTests {
         assertNotEquals(200, getUrlResponseCode(originalUrl));
 
         // Get resized signed image URL
-        String resizedUrl = fileStorage.generateSignedUrl(response, expiredInSeconds, "100", "100");
+        String resizedUrl = fileStorage.generateSignedUrl(jsonResponse, expiredInSeconds, "100", "100");
         assertNotNull(resizedUrl);
 
         // Check response code of resized signed image URL
@@ -142,7 +145,7 @@ public class ImageKitTests {
         assertNotEquals(200, getUrlResponseCode(resizedUrl));
 
         // Delete uploaded file
-        fileStorage.deleteFile(response);
+        assertTrue(fileStorage.deleteFile(jsonResponse));
     }
 
 

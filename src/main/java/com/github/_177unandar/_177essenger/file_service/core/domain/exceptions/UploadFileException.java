@@ -1,7 +1,9 @@
-package com.github._177unandar.file_service.core.domain.exceptions;
+package com.github._177unandar._177essenger.file_service.core.domain.exceptions;
 
-import com.github._177unandar.file_service.core.contracts.ErrorCodes;
+import com.github._177unandar._177essenger.file_service.core.contracts.ErrorCodes;
+import lombok.Getter;
 
+@Getter
 public class UploadFileException extends Exception {
 
     private final ErrorCodes errorCode;
@@ -13,11 +15,4 @@ public class UploadFileException extends Exception {
         this.entity = entity;
     }
 
-    public ErrorCodes getErrorCode() {
-        return errorCode;
-    }
-
-    public String getEntity() {
-        return entity;
-    }
 }

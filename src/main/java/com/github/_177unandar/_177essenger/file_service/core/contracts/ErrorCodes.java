@@ -1,5 +1,8 @@
-package com.github._177unandar.file_service.core.contracts;
+package com.github._177unandar._177essenger.file_service.core.contracts;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCodes {
     UPLOAD_ERROR("UPLOAD_ERROR", "5001"),
     UPLOAD_BAD_REQUEST("UPLOAD_BAD_REQUEST", "5002"),
@@ -17,11 +20,4 @@ public enum ErrorCodes {
         this.code = code;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public String getCode() {
-        return code;
-    }
 }
